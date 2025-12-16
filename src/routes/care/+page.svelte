@@ -239,7 +239,7 @@
 	}
 
 	.scene {
-		min-height: 420px;
+		min-height: 0;
 	}
 
 	.actions h2 {

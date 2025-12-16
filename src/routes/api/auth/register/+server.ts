@@ -3,7 +3,7 @@ import { createSession, createUserAsync, getUserByUsername } from '$lib/server/a
 import { SESSION_COOKIE, cookieSettings } from '$lib/server/security.js';
 
 const MIN_USERNAME_LENGTH = 3;
-const MIN_PASSWORD_LENGTH = 8;
+const MIN_PASSWORD_LENGTH = 4;
 
 const parseCredentials = async (request: Request) => {
 	try {

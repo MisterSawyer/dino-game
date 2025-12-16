@@ -23,13 +23,9 @@
 
 <div class="app-shell">
 	<header class="top-bar">
-		<div class="brand">
+		<a class="brand" href={resolve('/account')}>
 			<span class="logo">🦖</span>
-			<div>
-				<p class="eyebrow">Dino keeper</p>
-				<p class="title">Your prehistoric companion hub</p>
-			</div>
-		</div>
+		</a>
 		{#if layoutData.user}
 			<nav aria-label="Primary" class="nav">
 				{#each navLinks as link (link.path)}
@@ -39,15 +35,13 @@
 				{/each}
 			</nav>
 		{/if}
-		<a class="session-pill" href={resolve('/account')}>
-			{#if layoutData.user}
-				<span class="status-dot" aria-hidden="true"></span>
-				<span class="session-text">Signed in as {layoutData.user.username}</span>
-			{:else}
+
+		{#if layoutData.user === null}
+			<a class="session-pill" href={resolve('/account')}>
 				<span class="status-dot anonymous" aria-hidden="true"></span>
 				<span class="session-text">Sign in to start caring</span>
-			{/if}
-		</a>
+			</a>
+		{/if}
 	</header>
 
 	<main class="page-body">{@render renderChildren()}</main>
@@ -194,19 +188,47 @@
 
 	@media (max-width: 960px) {
 		.top-bar {
-			flex-direction: column;
-			align-items: flex-start;
+			flex-wrap: nowrap;
+			align-items: center;
+			gap: 0.5rem;
+			justify-content: space-between;
 		}
 
 		.nav {
-			width: 100%;
-			flex-wrap: wrap;
-			justify-content: flex-start;
+			min-width: 0;
+			flex: 1 1 auto;
+			margin-left: auto;
+			overflow-x: auto;
+			white-space: nowrap;
+			justify-content: flex-end;
+			scrollbar-width: none;
+			gap: 0.35rem;
+		}
+
+		.nav::-webkit-scrollbar {
+			display: none;
+		}
+
+		.nav a {
+			padding: 0.45rem 0.6rem;
+			font-size: 0.9rem;
 		}
 
 		.session-pill {
-			width: auto;
-			margin-left: 0;
+			margin-left: auto;
+			flex-shrink: 0;
+			padding: 0.35rem 0.65rem;
+			gap: 0.35rem;
+		}
+
+		.session-text {
+			font-size: 0.9rem;
+		}
+
+		.status-dot {
+			width: 7px;
+			height: 7px;
+			box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
 		}
 	}
 </style>

@@ -423,6 +423,7 @@
 		align-items: start;
 		width: 100%;
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		flex: 1;
 		flex-direction: column;
 		min-height: 0;
@@ -430,7 +431,7 @@
 
 	.map-layout {
 		display: grid;
-		grid-template-columns: 200px 1fr;
+		grid-template-columns: 1fr;
 		gap: 0.5rem 0.75rem;
 		align-items: start;
 		width: 100%;
@@ -503,7 +504,7 @@
 		border-radius: 12px;
 		background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.35), rgba(5, 9, 20, 0.9));
 		border: 1px solid rgba(148, 163, 184, 0.3);
-		width: 200px;
+		width: 100%;
 		aspect-ratio: 1 / 1;
 		min-height: 220px;
 		position: relative;
@@ -517,6 +518,7 @@
 		transform: translate(-50%, -50%);
 		display: grid;
 		place-items: center;
+		z-index: 3;
 	}
 
 	.player-body {
@@ -552,6 +554,8 @@
 		display: grid;
 		place-items: center;
 		transform: translate(-50%, -50%);
+		opacity: 0.85;
+		z-index: 2;
 	}
 
 	.node.food {
@@ -593,12 +597,13 @@
 	}
 
 	.legend {
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.5rem 0.75rem;
 		color: #cbd5e1;
 		font-weight: 700;
 		align-self: start;
+		width: 100%;
 	}
 
 	.chip {
@@ -644,8 +649,10 @@
 	}
 
 	.scene-canvas {
-		flex: 1;
-		position: relative;
+		/* MUST BE LIKE THAT TO MAKE CANVAS FILL 100% HEIGHT */
+		position: absolute;
+		width: 100%;
+		height: 100%;
 	}
 
 	.scene3d .viewport {
@@ -659,11 +666,6 @@
 		background: rgba(7, 11, 24, 0.85);
 		position: relative;
 		touch-action: none;
-	}
-
-	.scene3d :global(canvas) {
-		width: 100%;
-		height: 100%;
 	}
 
 	.touch-layer {
@@ -777,14 +779,8 @@
 
 	@media (max-width: 1000px) {
 		.explore {
-			grid-template-columns: 1fr;
+			grid-template-columns: 2fr;
 		}
-
-		.scene-canvas {
-			flex: 1;
-			position: relative;
-		}
-
 		.scene3d,
 		.map {
 			grid-column: 1;
@@ -824,10 +820,6 @@
 			height: 100%;
 		}
 
-		.scene-canvas {
-			flex: 1;
-			position: relative;
-		}
 		.map {
 			grid-column: 1;
 			width: 100%;
@@ -845,11 +837,8 @@
 		}
 
 		.legend {
-			flex-direction: row;
-			flex-wrap: wrap;
-			gap: 0.5rem;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 			align-self: stretch;
-			justify-content: space-between;
 			background: rgba(12, 18, 32, 0.65);
 			border: 1px solid rgba(148, 163, 184, 0.35);
 			border-radius: 10px;

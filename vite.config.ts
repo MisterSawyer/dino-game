@@ -16,7 +16,7 @@ if (process.env.VITEST && !globalThis.__vitest_browser_runner__) {
 }
 
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit()],
+	plugins: [sveltekit(), tailwindcss()],
 
 	test: {
 		expect: { requireAssertions: true },

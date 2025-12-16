@@ -239,6 +239,10 @@
 	});
 
 	$effect(() => {
+		if (currentAction && typeof effectivePlaybackSpeed === 'number') {
+			currentAction.setEffectiveTimeScale(effectivePlaybackSpeed);
+		}
+
 		currentClipFile = chooseClipName();
 		void loadClipModel(currentClipFile);
 	});

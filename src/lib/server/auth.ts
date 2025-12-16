@@ -51,7 +51,9 @@ export const getUserByUsername = (
 ): UserRecord | null => {
 	const client = getConnection(connection);
 	const normalized = normalizeUsername(username);
-	const row = client.prepare('SELECT * FROM users WHERE username_norm = ?').get(normalized);
+	const row = client.prepare('SELECT * FROM users WHERE username_norm = ?').get(normalized) as
+		| Readonly<Record<string, unknown>>
+		| undefined;
 	if (!row) {
 		return null;
 	}
@@ -90,7 +92,7 @@ export const getUserBySession = (
 			'SELECT s.id as session_id, s.user_id as session_user_id, s.created_at as session_created_at, s.expires_at as session_expires_at, u.* FROM sessions s JOIN users u ON s.user_id = u.id WHERE s.id = ?'
 		)
 		.get(sessionId) as
-		| (UserRecord & {
+		| (Readonly<Record<string, unknown>> & {
 				session_id: string;
 				session_user_id: number;
 				session_created_at: string;

@@ -15,7 +15,7 @@ const parseCredentials = async (request: Request) => {
 		}
 
 		return { username, password } as const;
-	} catch (error) {
+	} catch {
 		return null;
 	}
 };

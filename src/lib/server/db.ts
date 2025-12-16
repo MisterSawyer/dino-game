@@ -67,7 +67,9 @@ export const openDatabase = (sqlitePath: string = defaultPath): SQLiteDatabase =
 
 export const db = openDatabase();
 
-export const mapUserRow = (row: any): UserRecord => ({
+type RowRecord = Readonly<Record<string, unknown>>;
+
+export const mapUserRow = (row: RowRecord): UserRecord => ({
 	id: toUserId(Number(row.id)),
 	username: String(row.username),
 	usernameNorm: String(row.username_norm),
@@ -75,14 +77,14 @@ export const mapUserRow = (row: any): UserRecord => ({
 	createdAt: String(row.created_at)
 });
 
-export const mapSessionRow = (row: any): SessionRecord => ({
+export const mapSessionRow = (row: RowRecord): SessionRecord => ({
 	id: toSessionId(String(row.id)),
 	userId: toUserId(Number(row.user_id)),
 	createdAt: String(row.created_at),
 	expiresAt: String(row.expires_at)
 });
 
-export const mapSaveRow = (row: any): SaveRecord => ({
+export const mapSaveRow = (row: RowRecord): SaveRecord => ({
 	userId: toUserId(Number(row.user_id)),
 	revision: toRevision(Number(row.revision)),
 	updatedAt: String(row.updated_at),

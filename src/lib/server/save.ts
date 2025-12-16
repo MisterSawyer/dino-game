@@ -11,7 +11,9 @@ export interface SaveResult {
 
 export const loadSave = (userId: UserId, connection?: DatabaseConnection): SaveResult => {
 	const client = getConnection(connection);
-	const row = client.prepare('SELECT * FROM saves WHERE user_id = ?').get(userId);
+	const row = client.prepare('SELECT * FROM saves WHERE user_id = ?').get(userId) as
+		| Readonly<Record<string, unknown>>
+		| undefined;
 
 	if (!row) {
 		const fresh = createDefaultSave();

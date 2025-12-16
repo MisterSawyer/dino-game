@@ -17,6 +17,8 @@ declare global {
 			readonly user?: Locals['user'] | null;
 			readonly csrfToken: string;
 			readonly save?: PetSave;
+			readonly activeDinoSlug?: string | null;
+			readonly dino?: unknown;
 		}
 	}
 }

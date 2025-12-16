@@ -43,7 +43,7 @@ export const validateOriginHeader = (event: RequestEvent): boolean => {
 			if (refererOrigin !== expectedOrigin) {
 				return false;
 			}
-		} catch (error) {
+		} catch {
 			return false;
 		}
 	}

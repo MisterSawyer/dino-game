@@ -1,3 +1,5 @@
+import { defaultDinoSlug, findDinoBySlug } from '$lib/library/dinos.js';
+
 export type PetMood = 'happy' | 'calm' | 'sleepy' | 'hungry';
 
 export interface PetStats {
@@ -16,6 +18,7 @@ export interface PetSave {
 	readonly stats: PetStats;
 	readonly inventory: InventoryState;
 	readonly lastSeen: string;
+	readonly activeDinoSlug: string;
 }
 
 const clamp = (value: number, min: number, max: number): number =>
@@ -45,6 +48,16 @@ const normalizeIsoDate = (value: unknown): string => {
 	}
 
 	return new Date().toISOString();
+};
+
+const normalizeActiveDino = (value: unknown): string => {
+	if (typeof value === 'string') {
+		const candidate = findDinoBySlug(value.trim());
+		if (candidate) {
+			return candidate.slug;
+		}
+	}
+	return defaultDinoSlug;
 };
 
 export const sanitizeSavePayload = (input: unknown): PetSave => {
@@ -77,7 +90,8 @@ export const sanitizeSavePayload = (input: unknown): PetSave => {
 			food: normalizeNumber(inventory.food, 1, 0, 999),
 			toys: normalizeNumber(inventory.toys, 1, 0, 999)
 		},
-		lastSeen: normalizeIsoDate(payload.lastSeen)
+		lastSeen: normalizeIsoDate(payload.lastSeen),
+		activeDinoSlug: normalizeActiveDino(payload.activeDinoSlug)
 	};
 };
 
@@ -89,5 +103,6 @@ export const createDefaultSave = (): PetSave => ({
 		lastAction: 'Idle'
 	},
 	inventory: { food: 3, toys: 1 },
-	lastSeen: new Date().toISOString()
+	lastSeen: new Date().toISOString(),
+	activeDinoSlug: defaultDinoSlug
 });

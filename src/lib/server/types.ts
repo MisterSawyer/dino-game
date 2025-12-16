@@ -3,30 +3,30 @@ export type SessionId = string & { readonly brand: 'SessionId' };
 export type SaveRevision = number & { readonly brand: 'SaveRevision' };
 
 export interface UserRecord {
-        readonly id: UserId;
-        readonly username: string;
-        readonly usernameNorm: string;
-        readonly passwordHash: string;
-        readonly createdAt: string;
+	readonly id: UserId;
+	readonly username: string;
+	readonly usernameNorm: string;
+	readonly passwordHash: string;
+	readonly createdAt: string;
 }
 
 export interface SessionRecord {
-        readonly id: SessionId;
-        readonly userId: UserId;
-        readonly createdAt: string;
-        readonly expiresAt: string;
+	readonly id: SessionId;
+	readonly userId: UserId;
+	readonly createdAt: string;
+	readonly expiresAt: string;
 }
 
 export interface SaveRecord {
-        readonly userId: UserId;
-        readonly revision: SaveRevision;
-        readonly updatedAt: string;
-        readonly saveJson: string;
+	readonly userId: UserId;
+	readonly revision: SaveRevision;
+	readonly updatedAt: string;
+	readonly saveJson: string;
 }
 
 export interface SessionUser {
-        readonly user: UserRecord;
-        readonly session: SessionRecord;
+	readonly user: UserRecord;
+	readonly session: SessionRecord;
 }
 
 export const toUserId = (id: number): UserId => id as UserId;

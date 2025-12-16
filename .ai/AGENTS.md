@@ -98,3 +98,8 @@ use discriminated unions and typed actions for all state transitions.
 ## Testing
 
 Always add tests for newly created or changed functionalities.
+Always run all the tests, even when no files were changed.
+
+## Linting
+
+Always run npm run lint_fix, and fix all remaining errors.

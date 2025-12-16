@@ -1,0 +1,104 @@
+name: Deploy to server
+
+on:
+  workflow_run:
+    workflows: ['Build']
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    env:
+      SERVER_IP: 178.235.209.21
+      USER_NAME: dino
+      INSTALL_DIR: /home/dino/dino-game-install/
+      ARTIFACT_NAME: dino-game
+      SERVICE_NAME: dino-game
+
+    steps:
+      - name: Download and extract artifacts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          mkdir -p artifact
+          echo "Getting artifact list..."
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+               "https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts" \
+            > artifacts.json
+
+          ARTIFACT_ID=$(jq -r --arg NAME "$ARTIFACT_NAME" '.artifacts[] | select(.name == $NAME) | .id' artifacts.json)
+
+          if [ -z "$ARTIFACT_ID" ]; then
+            echo "❌ Artifact '$ARTIFACT_NAME' not found"
+            echo "Artifacts available:"
+            cat artifacts.json
+            exit 1
+          fi
+
+          echo "✅ Found artifact ID: $ARTIFACT_ID"
+          echo "Downloading artifact..."
+          curl -L -H "Authorization: token $GITHUB_TOKEN" \
+            -o artifact.zip \
+            "https://api.github.com/repos/$REPO/actions/artifacts/$ARTIFACT_ID/zip"
+
+          unzip artifact.zip -d artifact
+
+          echo "Extract archive into a 'deploy' directory..."
+          mkdir deploy
+          tar -xzf artifact/$ARTIFACT_NAME.tar.gz -C deploy
+
+      - name: Stop service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.USER_NAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            echo "Stopping service..."
+            sudo -n /usr/bin/systemctl stop ${{ env.SERVICE_NAME }}
+
+      - name: Clear remote install directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.USER_NAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "Clearing install directory..."
+            mkdir -p /tmp/empty-dir
+            rsync -a --delete /tmp/empty-dir/ $INSTALL_DIR
+
+      - name: Install tools
+        run: sudo apt update && sudo apt install -y sshpass rsync
+
+      - name: Upload to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          KEY_FILE=$(mktemp)
+          echo "$SSH_PRIVATE_KEY" > "$KEY_FILE"
+          chmod 600 "$KEY_FILE"
+
+          rsync -az --delete -e "ssh -i $KEY_FILE -o StrictHostKeyChecking=no" \
+            deploy/ $USER_NAME@$SERVER_IP:$INSTALL_DIR
+
+          rm -f "$KEY_FILE"
+        shell: bash
+
+      - name: Restart service
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.USER_NAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            echo "Restarting service..."
+            sudo -n /usr/bin/systemctl restart ${{ env.SERVICE_NAME }}
+            sudo -n /usr/bin/systemctl status ${{ env.SERVICE_NAME }} --no-pager || true

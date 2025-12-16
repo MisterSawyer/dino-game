@@ -3,6 +3,18 @@ import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
 
+declare global {
+	var __vitest_browser_runner__:
+		| { wrapDynamicImport: <T>(fn: () => Promise<T>) => Promise<T> }
+		| undefined;
+}
+
+if (process.env.VITEST && !globalThis.__vitest_browser_runner__) {
+	globalThis.__vitest_browser_runner__ = {
+		wrapDynamicImport: (fn) => fn()
+	};
+}
+
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 

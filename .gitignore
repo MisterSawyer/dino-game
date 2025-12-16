@@ -24,3 +24,9 @@ vite.config.ts.timestamp-*
 
 # SQLite
 *.db
+*.db-shm
+*.db-wal
+
+# Local 3D assets
+static/models/*.glb
+static/models/*.gltf

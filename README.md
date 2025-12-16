@@ -2,21 +2,14 @@
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-## Creating a project
+## 3D model asset
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
+The 3D dinosaur model is not tracked in version control to keep the repository lean. Place your GLB at `static/models/dino.glb` (or
+update the path in `src/lib/components/DinoModel.svelte`). Any `.glb` or `.gltf` files inside `static/models/` are ignored by git.
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Install dependencies with `npm install`, then start a development server:
 
 ```sh
 npm run dev
@@ -34,5 +27,3 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
